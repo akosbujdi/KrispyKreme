@@ -10,9 +10,9 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import MuiCard from '@mui/material/Card';
-import { styled } from '@mui/material/styles';
+import {styled} from '@mui/material/styles';
 
-const Card = styled(MuiCard)(({ theme }) => ({
+const Card = styled(MuiCard)(({theme}) => ({
     display: 'flex',
     flexDirection: 'column',
     alignSelf: 'center',
@@ -31,7 +31,7 @@ const Card = styled(MuiCard)(({ theme }) => ({
     }),
 }));
 
-const SignInContainer = styled(Stack)(({ theme }) => ({
+const SignUpContainer = styled(Stack)(({theme}) => ({
     height: 'calc((1 - var(--template-frame-height, 0)) * 100dvh)',
     minHeight: '100%',
     padding: theme.spacing(2),
@@ -54,22 +54,14 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
     },
 }));
 
-export default function SignIn(props) {
+export default function SignUp(props) {
     const [emailError, setEmailError] = React.useState(false);
     const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
     const [passwordError, setPasswordError] = React.useState(false);
     const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
-    const [confPasswordError,setConfPasswordError] = React.useState('');
-    const [confPasswordErrorMessage,setConfPasswordErrorMessage] = React.useState('');
+    const [confPasswordError, setConfPasswordError] = React.useState('');
+    const [confPasswordErrorMessage, setConfPasswordErrorMessage] = React.useState('');
     const [open, setOpen] = React.useState(false);
-
-    const handleClickOpen = () => {
-        setOpen(true);
-    };
-
-    const handleClose = () => {
-        setOpen(false);
-    };
 
     const handleSubmit = (event) => {
         if (emailError || passwordError || confPasswordError) {
@@ -82,7 +74,22 @@ export default function SignIn(props) {
             password: data.get('password'),
             confPassword: data.get('confPassword')
         });
+        let email = data.get('email');
+        let password = data.get('password');
+        runDBCallAsync(`http://localhost:3000/api/register?email=${email}&password=${password}`)
+
     };
+
+    async function runDBCallAsync(url) {
+        const res = await fetch(url);
+        const data = await res.json();
+        if(data.data === 'valid'){
+            window.location.href = './login';
+        } else {
+            console.log("not valid")
+        }
+    }
+
 
     const validateInputs = () => {
         const email = document.getElementById('email');
@@ -128,13 +135,13 @@ export default function SignIn(props) {
 
     return (
         <>
-            <CssBaseline enableColorScheme />
-            <SignInContainer direction="column" justifyContent="space-between">
+            <CssBaseline enableColorScheme/>
+            <SignUpContainer direction="column" justifyContent="space-between">
                 <Card variant="outlined">
                     <Typography
                         component="h1"
                         variant="h4"
-                        sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
+                        sx={{width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)'}}
                     >
                         Sign up
                     </Typography>
@@ -164,11 +171,11 @@ export default function SignIn(props) {
                                 fullWidth
                                 variant="outlined"
                                 color={emailError ? 'error' : 'primary'}
-                                sx={{ ariaLabel: 'email' }}
+                                sx={{ariaLabel: 'email'}}
                             />
                         </FormControl>
                         <FormControl>
-                            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                            <Box sx={{display: 'flex', justifyContent: 'space-between'}}>
                                 <FormLabel htmlFor="password">Password</FormLabel>
                             </Box>
                             <TextField
@@ -187,7 +194,7 @@ export default function SignIn(props) {
                             />
                         </FormControl>
                         <FormControl>
-                            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                            <Box sx={{display: 'flex', justifyContent: 'space-between'}}>
                                 <FormLabel htmlFor="confPassword">Confirm Password</FormLabel>
                             </Box>
                             <TextField
@@ -213,13 +220,13 @@ export default function SignIn(props) {
                         >
                             Sign up
                         </Button>
-                        <Typography sx={{ textAlign: 'center' }}>
+                        <Typography sx={{textAlign: 'center'}}>
                             Already have an account?{' '}
                             <span>
                 <Link
                     href=".//login"
                     variant="body2"
-                    sx={{ alignSelf: 'center' }}
+                    sx={{alignSelf: 'center'}}
                 >
                   Sign in
                 </Link>
@@ -227,7 +234,7 @@ export default function SignIn(props) {
                         </Typography>
                     </Box>
                 </Card>
-            </SignInContainer>
+            </SignUpContainer>
         </>
     );
 }

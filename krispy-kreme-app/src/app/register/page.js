@@ -61,34 +61,32 @@ export default function SignUp(props) {
     const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
     const [confPasswordError, setConfPasswordError] = React.useState('');
     const [confPasswordErrorMessage, setConfPasswordErrorMessage] = React.useState('');
-    const [open, setOpen] = React.useState(false);
 
     const handleSubmit = (event) => {
+        event.preventDefault();
         if (emailError || passwordError || confPasswordError) {
-            event.preventDefault();
             return;
         }
         const data = new FormData(event.currentTarget);
-        console.log({
-            email: data.get('email'),
-            password: data.get('password'),
-            confPassword: data.get('confPassword')
-        });
         let email = data.get('email');
         let password = data.get('password');
-        runDBCallAsync(`http://localhost:3000/api/register?email=${email}&password=${password}`)
+        const url = `http://localhost:3000/api/register?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`;
 
+        fetch(url)
+            .then(async (res) => {
+                const data = await res.json();
+                if (!res.ok) {
+                    alert(data.message);
+                    return;
+                }
+                window.location.href = './login';
+
+            })
+            .catch((error) => {
+                console.error('Error during registration:',error.message);
+                alert('Something went wrong. Please try again.');
+            })
     };
-
-    async function runDBCallAsync(url) {
-        const res = await fetch(url);
-        const data = await res.json();
-        if(data.data === 'valid'){
-            window.location.href = './login';
-        } else {
-            console.log("not valid")
-        }
-    }
 
 
     const validateInputs = () => {
@@ -98,7 +96,7 @@ export default function SignUp(props) {
 
         let isValid = true;
 
-        if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
+        if (!email.value /**|| !/\S+@\S+\.\S+/.test(email.value)*/) {
             setEmailError(true);
             setEmailErrorMessage('Please enter a valid email address.');
             isValid = false;
@@ -107,27 +105,22 @@ export default function SignUp(props) {
             setEmailErrorMessage('');
         }
 
-        if (!password.value || password.value.length < 6) {
-            setPasswordError(true);
-            setConfPasswordError(true);
-            setPasswordErrorMessage('Password must be at least 6 characters long.');
-            isValid = false;
-        } else {
-            setPasswordError(false);
-            setConfPasswordError(false);
-            setPasswordErrorMessage('');
-        }
-
         if (confPassword.value !== password.value) {
             setConfPasswordError(true);
-            setPasswordError(true);
             setConfPasswordErrorMessage("Passwords do not match!");
             isValid = false;
         } else {
             setConfPasswordError(false);
+            setConfPasswordErrorMessage('');
+        }
+
+        if (!password.value || password.value.length < 6) {
+            setPasswordError(true);
+            setPasswordErrorMessage('Password must be at least 6 characters long.');
+            isValid = false;
+        } else {
             setPasswordError(false);
             setPasswordErrorMessage('');
-            setConfPasswordErrorMessage('');
         }
 
         return isValid;

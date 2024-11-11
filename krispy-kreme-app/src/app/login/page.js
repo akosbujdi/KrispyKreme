@@ -70,15 +70,29 @@ export default function SignIn(props) {
     };
 
     const handleSubmit = (event) => {
+        event.preventDefault();
         if (emailError || passwordError) {
-            event.preventDefault();
             return;
         }
         const data = new FormData(event.currentTarget);
-        console.log({
-            email: data.get('email'),
-            password: data.get('password'),
-        });
+        let email = data.get('email');
+        let password = data.get('password');
+
+        const url = `http://localhost:3000/api/login?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`;
+
+        fetch(url)
+            .then(async (res) => {
+                const data = await res.json();
+                if (!res.ok) {
+                    alert(data.message);
+                    return;
+                }
+                window.location.href = './';
+            })
+            .catch((error) => {
+                console.error('Error during login:',error.message);
+                alert('Something went wrong. Please try again.');
+            })
     };
 
     const validateInputs = () => {

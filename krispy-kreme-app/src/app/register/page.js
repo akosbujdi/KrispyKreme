@@ -70,6 +70,7 @@ export default function SignUp(props) {
         const data = new FormData(event.currentTarget);
         let email = data.get('email');
         let password = data.get('password');
+
         const url = `http://localhost:3000/api/register?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`;
 
         fetch(url)

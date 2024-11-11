@@ -1,6 +1,7 @@
 // app/api/register/route.js
 import clientPromise from '../../lib/mongodb';
 import {NextResponse} from "next/server";
+import bcrypt from 'bcrypt';
 
 export async function GET(req) {
     try {
@@ -30,8 +31,16 @@ export async function GET(req) {
             return NextResponse.json({message: 'User already exists.'}, {status: 409});
         }
 
+        // Hash pass using bcrypt
+        const saltRounds = 10;
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+
         // Insert user data into the "users" collection
-        const result = await collection.insertOne({email, password});
+        const result = await collection.insertOne({
+            email,
+            password: hashedPassword,
+            role: "user",
+        });
 
         console.log('User inserted:', result);
 

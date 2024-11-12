@@ -3,8 +3,8 @@ import {sign, verify} from 'jsonwebtoken';
 const SECRET_KEY = process.env.SECRET_KEY;
 
 export function createSession(user) {
-    const {_id, email, role} = user;
-    return sign({_id, email, role}, SECRET_KEY, {expiresIn: '1h'});
+    const {_id, email, username, role} = user;
+    return sign({_id, email, username, role}, SECRET_KEY, {expiresIn: '1h'});
 }
 
 export function verifySession(token) {

@@ -57,6 +57,8 @@ const SignUpContainer = styled(Stack)(({theme}) => ({
 export default function SignUp(props) {
     const [emailError, setEmailError] = React.useState(false);
     const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
+    const [usernameError, setUsernameError] = React.useState(false);
+    const [usernameErrorMessage, setUsernameErrorMessage] = React.useState('');
     const [passwordError, setPasswordError] = React.useState(false);
     const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
     const [confPasswordError, setConfPasswordError] = React.useState('');
@@ -64,14 +66,15 @@ export default function SignUp(props) {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        if (emailError || passwordError || confPasswordError) {
+        if (emailError || usernameError || passwordError || confPasswordError) {
             return;
         }
         const data = new FormData(event.currentTarget);
         let email = data.get('email');
+        let username = data.get('username');
         let password = data.get('password');
 
-        const url = `http://localhost:3000/api/register?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`;
+        const url = `http://localhost:3000/api/register?email=${encodeURIComponent(email)}&username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`;
 
         fetch(url)
             .then(async (res) => {
@@ -84,7 +87,7 @@ export default function SignUp(props) {
 
             })
             .catch((error) => {
-                console.error('Error during registration:',error.message);
+                console.error('Error during registration:', error.message);
                 alert('Something went wrong. Please try again.');
             })
     };
@@ -92,6 +95,7 @@ export default function SignUp(props) {
 
     const validateInputs = () => {
         const email = document.getElementById('email');
+        const username = document.getElementById('username');
         const password = document.getElementById('password');
         const confPassword = document.getElementById('confPassword');
 
@@ -100,6 +104,15 @@ export default function SignUp(props) {
         if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
             setEmailError(true);
             setEmailErrorMessage('Please enter a valid email address.');
+            isValid = false;
+        } else {
+            setEmailError(false);
+            setEmailErrorMessage('');
+        }
+
+        if (!username.value || !/^[a-zA-Z0-9_]{3,16}$/.test(username.value)) {
+            setUsernameError(true);
+            setUsernameErrorMessage("Username must be 3-20 characters, letters, numbers, underscores, and dashes only");
             isValid = false;
         } else {
             setEmailError(false);
@@ -169,9 +182,25 @@ export default function SignUp(props) {
                             />
                         </FormControl>
                         <FormControl>
-                            <Box sx={{display: 'flex', justifyContent: 'space-between'}}>
-                                <FormLabel htmlFor="password">Password</FormLabel>
-                            </Box>
+                            <FormLabel htmlFor="username">Username</FormLabel>
+                            <TextField
+                                error={usernameError}
+                                helperText={usernameErrorMessage}
+                                id="username"
+                                type="text"
+                                name="username"
+                                placeholder="username"
+                                autoComplete="username"
+                                autoFocus
+                                required
+                                fullWidth
+                                variant="outlined"
+                                color={emailError ? 'error' : 'primary'}
+                                sx={{ariaLabel: 'username'}}
+                            />
+                        </FormControl>
+                        <FormControl>
+                            <FormLabel htmlFor="password">Password</FormLabel>
                             <TextField
                                 error={passwordError}
                                 helperText={passwordErrorMessage}
@@ -188,9 +217,7 @@ export default function SignUp(props) {
                             />
                         </FormControl>
                         <FormControl>
-                            <Box sx={{display: 'flex', justifyContent: 'space-between'}}>
-                                <FormLabel htmlFor="confPassword">Confirm Password</FormLabel>
-                            </Box>
+                            <FormLabel htmlFor="confPassword">Confirm Password</FormLabel>
                             <TextField
                                 error={confPasswordError}
                                 helperText={confPasswordErrorMessage}

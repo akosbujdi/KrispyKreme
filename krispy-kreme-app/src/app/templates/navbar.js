@@ -21,9 +21,11 @@ const pages = ['About', 'Products'];
 const settings = ['Logout'];
 
 function Navbar() {
-    const [role, setRole] = useState(null);  // Track the user's role
+    const [role, setRole] = useState(null);
+    const [username, setUsername] = useState(null);
     const [anchorElNav, setAnchorElNav] = React.useState(null);
     const [anchorElUser, setAnchorElUser] = React.useState(null);
+    const [weather, setWeatherData] = useState(0)
     const router = useRouter();
 
     useEffect(() => {
@@ -33,7 +35,8 @@ function Navbar() {
 
             if (res.ok) {
                 setRole(data.role);
-                // alert(`User logged in as: ${data.email}, Role: ${data.role}`);
+                setUsername(data.username);
+                // alert(`User logged in as: ${data.email}, Username: ${data.username}, Role: ${data.role}`);
             } else {
                 // No valid session, redirect to login page
                 router.push('/login');
@@ -42,6 +45,16 @@ function Navbar() {
 
         checkSession();
     }, []);
+
+    useEffect(() => {
+
+        fetch('http://localhost:3000/api/getWeather')
+            .then((res) => res.json())
+            .then((weather) => {
+                setWeatherData(weather);
+            })
+
+    }, [])
 
     const pagesWithDashboard = role === 'admin' ? [...pages, 'Dashboard'] : pages;
 
@@ -75,25 +88,10 @@ function Navbar() {
             <AppBar position="static">
                 <Container maxWidth="xl">
                     <Toolbar disableGutters>
-                        <Image src="/logo.png" alt={"logo"} width={110} height={0} className={"navbar-logo"}
-                               style={{height: 'auto', maxWidth: '100%', marginRight: '.3rem'}} priority></Image>
-                        <Typography
-                            variant="h6"
-                            noWrap
-                            component="a"
-                            href="./"
-                            sx={{
-                                mr: 2,
-                                display: {xs: 'none', md: 'flex'},
-                                fontFamily: 'monospace',
-                                fontWeight: 700,
-                                letterSpacing: '.2rem',
-                                color: 'white',
-                                textDecoration: 'none',
-                            }}
-                        >
-                            Krispy Kreme
-                        </Typography>
+                        <a href="./" style={{display: 'inline-block'}}>
+                            <Image src="/logo.png" alt={"logo"} width={110} height={0} className={"navbar-logo"}
+                                   style={{height: 'auto', maxWidth: '100%', marginRight: '.3rem'}} priority></Image>
+                        </a>
 
                         <Box sx={{flexGrow: 1, display: {xs: 'flex', md: 'none'}}}>
                             <IconButton
@@ -120,13 +118,17 @@ function Navbar() {
                                 onClose={handleCloseNavMenu}
                                 sx={{display: {xs: 'block', md: 'none'}}}
                             >
-                                {pagesWithDashboard.map((page) => (<MenuItem key={page} onClick={handleCloseNavMenu}>
-                                    <Typography sx={{textAlign: 'center'}}>{page}</Typography>
-                                </MenuItem>))}
+                                {pagesWithDashboard.map((page) => (
+                                    <MenuItem key={page} onClick={handleCloseNavMenu}>
+                                        <Typography sx={{textAlign: 'center'}}>{page}</Typography>
+                                    </MenuItem>))}
                             </Menu>
                         </Box>
-                        <Image src="/logo.png" alt={"logo"} width={90} height={0} className={"sm-navbar-logo"}
-                               style={{height: 'auto', maxWidth: '100%', marginRight: '.3rem'}} priority></Image>
+                        <a href="./" style={{display: 'inline-block'}}>
+                            <Image src="/logo.png" alt={"logo"} width={100} height={0} className={"sm-navbar-logo"}
+                                   style={{height: 'auto', maxWidth: '100%', marginRight: '.3rem'}} priority></Image>
+                        </a>
+
                         <Typography
                             variant="h5"
                             noWrap
@@ -143,21 +145,25 @@ function Navbar() {
                                 textDecoration: 'none',
                             }}
                         >
-                            Krispy Kreme
                         </Typography>
                         <Box sx={{flexGrow: 1, display: {xs: 'none', md: 'flex'}}}>
                             {pagesWithDashboard.map((page) => (<Button
                                 key={page}
                                 onClick={handleCloseNavMenu}
-                                sx={{my: 2, color: 'white', display: 'block'}}
-                            >
+                                sx={{my: 2, color: 'white', display: 'block'}}>
                                 {page}
                             </Button>))}
                         </Box>
-                        <Box sx={{flexGrow: 0}}>
+                        <Box sx={{display: 'flex', alignItems: 'center'}}>
+                            <Typography sx={{ color: 'white', paddingRight: '1rem' }}>
+                                Today's temperature: {JSON.stringify(weather.temp)}°C
+                            </Typography>
                             <Tooltip title="Open user settings">
                                 <IconButton onClick={handleOpenUserMenu} sx={{p: 0}}>
                                     <PersonIcon sx={{fontSize: 30, color: 'white'}}/>
+                                    {username && (
+                                        <Typography sx={{ml: 1, color: 'white'}}>{username}</Typography>
+                                    )}
                                 </IconButton>
                             </Tooltip>
                             <Menu

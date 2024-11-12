@@ -155,9 +155,7 @@ export default function SignIn(props) {
                             />
                         </FormControl>
                         <FormControl>
-                            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                                <FormLabel htmlFor="password">Password</FormLabel>
-                            </Box>
+                            <FormLabel htmlFor="password">Password</FormLabel>
                             <TextField
                                 error={passwordError}
                                 helperText={passwordErrorMessage}

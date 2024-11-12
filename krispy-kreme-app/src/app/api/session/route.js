@@ -15,7 +15,7 @@ export async function GET(req) {
         console.error('Session verification failed');
         return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
-    return NextResponse.json({ _id: user._id, email: user.email, role: user.role });
+    return NextResponse.json({ _id: user._id, email: user.email, username: user.username, role: user.role });
 }
 
 export async function DELETE() {

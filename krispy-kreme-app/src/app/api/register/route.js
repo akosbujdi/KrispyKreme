@@ -7,12 +7,18 @@ export async function GET(req) {
     try {
         const {searchParams} = new URL(req.url);
         const email = searchParams.get('email');
+        const username = searchParams.get('username');
         const password = searchParams.get('password');
 
         // Email validation
         const emailRegex = /\S+@\S+\.\S+/;
         if (!emailRegex.test(email)) {
             return NextResponse.json({message: 'Invalid email format.'}, {status: 400});
+        }
+
+        const userRegex = /^[a-zA-Z0-9_]{3,16}$/;
+        if (!userRegex.test(username)) {
+            return NextResponse.json({message: 'Invalid username format.'}, {status: 400});
         }
 
         // Password validation
@@ -26,9 +32,15 @@ export async function GET(req) {
         const collection = db.collection('users');
 
         // Check if email already exists
-        const existingUser = await collection.findOne({email});
-        if (existingUser) {
-            return NextResponse.json({message: 'User already exists.'}, {status: 409});
+        const existingEmail = await collection.findOne({email});
+        if (existingEmail) {
+            return NextResponse.json({message: 'Email already exists.'}, {status: 409});
+        }
+
+        // Check if username already exists
+        const existingUsername = await collection.findOne({username});
+        if (existingUsername) {
+            return NextResponse.json({message: 'Username already exists.'}, {status: 409});
         }
 
         // Hash pass using bcrypt
@@ -38,6 +50,7 @@ export async function GET(req) {
         // Insert user data into the "users" collection
         const result = await collection.insertOne({
             email,
+            username,
             password: hashedPassword,
             role: "user",
         });

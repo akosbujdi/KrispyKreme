@@ -33,3 +33,15 @@ a {
     color-scheme: dark;
   }
 }
+
+@media (max-width: 900px) {
+  .navbar-logo {
+    display: none;
+  }
+}
+
+@media (min-width: 900px) {
+  .sm-navbar-logo {
+    display: none;
+  }
+}

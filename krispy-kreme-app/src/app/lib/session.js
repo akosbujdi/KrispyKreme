@@ -3,16 +3,15 @@ import {sign, verify} from 'jsonwebtoken';
 const SECRET_KEY = process.env.SECRET_KEY;
 
 export function createSession(user) {
-    const {_id,username,role} = user;
-    const token = sign({_id,username,role},SECRET_KEY,{expiresIn: '1h'});
-    return token;
+    const {_id, email, role} = user;
+    return sign({_id, email, role}, SECRET_KEY, {expiresIn: '1h'});
 }
 
-export function verifySession(user) {
+export function verifySession(token) {
     try {
         return verify(token, SECRET_KEY);
     } catch (error) {
-        console.error('Invalid session token',error);
+        console.error('Invalid session token', error);
         return null;
     }
 }

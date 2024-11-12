@@ -97,7 +97,7 @@ export default function SignUp(props) {
 
         let isValid = true;
 
-        if (!email.value /**|| !/\S+@\S+\.\S+/.test(email.value)*/) {
+        if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
             setEmailError(true);
             setEmailErrorMessage('Please enter a valid email address.');
             isValid = false;

@@ -1,7 +1,7 @@
 import clientPromise from '../../lib/mongodb';
 import {NextResponse} from "next/server";
 import bcrypt from 'bcrypt';
-import {createSession} from "@/app/lib/session";
+import {createSession, verifySession} from "@/app/lib/session";
 import process from "next/dist/build/webpack/loaders/resolve-url-loader/lib/postcss";
 
 export async function GET(req) {

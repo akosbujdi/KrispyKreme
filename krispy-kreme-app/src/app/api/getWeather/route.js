@@ -7,8 +7,6 @@ export async function GET(req, res) {
 
     const data = await res2.json()
 
-    console.log(data.current.temp_c)
-
     let currentTemp = data.current.temp_c
 
     // at the end of the process we need to send something back.

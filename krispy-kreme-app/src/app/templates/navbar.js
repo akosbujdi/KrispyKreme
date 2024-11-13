@@ -17,7 +17,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import {useRouter} from 'next/navigation';
 import {useEffect, useState} from "react";
 
-const pages = ['About', 'Products'];
+const pages = ['Products'];
 const settings = ['Logout'];
 
 function Navbar() {
@@ -156,7 +156,7 @@ function Navbar() {
                         </Box>
                         <Box sx={{display: 'flex', alignItems: 'center'}}>
                             <Typography sx={{ color: 'white', paddingRight: '1rem' }}>
-                                Today's temperature: {JSON.stringify(weather.temp)}°C
+                                Temperature: {JSON.stringify(weather.temp)}°C
                             </Typography>
                             <Tooltip title="Open user settings">
                                 <IconButton onClick={handleOpenUserMenu} sx={{p: 0}}>

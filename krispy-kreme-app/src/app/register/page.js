@@ -11,6 +11,8 @@ import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import MuiCard from '@mui/material/Card';
 import {styled} from '@mui/material/styles';
+import {Alert} from "@mui/material";
+import {useState} from 'react';
 
 const Card = styled(MuiCard)(({theme}) => ({
     display: 'flex',
@@ -54,7 +56,9 @@ const SignUpContainer = styled(Stack)(({theme}) => ({
     },
 }));
 
-export default function SignUp(props) {
+export default function SignUp() {
+    const [alertMessage, setAlertMessage] = useState('');
+    const [alertType, setAlertType] = useState('');
     const [emailError, setEmailError] = React.useState(false);
     const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
     const [usernameError, setUsernameError] = React.useState(false);
@@ -80,7 +84,8 @@ export default function SignUp(props) {
             .then(async (res) => {
                 const data = await res.json();
                 if (!res.ok) {
-                    alert(data.message);
+                    setAlertMessage(data.message);
+                    setAlertType('error');
                     return;
                 }
                 window.location.href = './login';
@@ -88,7 +93,8 @@ export default function SignUp(props) {
             })
             .catch((error) => {
                 console.error('Error during registration:', error.message);
-                alert('Something went wrong. Please try again.');
+                setAlertMessage('Something went wrong. Please try again.');
+                setAlertType('error');
             })
     };
 
@@ -145,6 +151,13 @@ export default function SignUp(props) {
             <CssBaseline enableColorScheme/>
             <SignUpContainer direction="column" justifyContent="space-between">
                 <Card variant="outlined">
+                    {alertMessage && (
+                        <Stack sx={{ width: '100%', mb: 2 }} spacing={2}>
+                            <Alert severity={alertType} onClose={() => setAlertMessage('')}>
+                                {alertMessage}
+                            </Alert>
+                        </Stack>
+                    )}
                     <Typography
                         component="h1"
                         variant="h4"

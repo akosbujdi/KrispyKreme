@@ -155,8 +155,8 @@ function Navbar() {
                             </Button>))}
                         </Box>
                         <Box sx={{display: 'flex', alignItems: 'center'}}>
-                            <Typography sx={{ color: 'white', paddingRight: '1rem' }}>
-                                Temperature: {JSON.stringify(weather.temp)}°C
+                            <Typography sx={{ color: 'white', fontSize:{md: '1rem', xs:'0.7rem'}}}>
+                                Current Temperature: {JSON.stringify(weather.temp)}°C
                             </Typography>
                             <Tooltip title="Open user settings">
                                 <IconButton onClick={handleOpenUserMenu} sx={{p: 0}}>

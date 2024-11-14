@@ -1,6 +1,9 @@
 // templates/footer.js
 import React from 'react';
 import { Box, Typography, Link, Container } from '@mui/material';
+import FacebookIcon from '@mui/icons-material/Facebook';
+import InstagramIcon from '@mui/icons-material/Instagram';
+import XIcon from '@mui/icons-material/X'; // Using Twitter icon for 'X'
 
 const Footer = () => {
     return (
@@ -24,7 +27,7 @@ const Footer = () => {
                 }}
             >
                 <Typography variant="body1">
-                    © {new Date().getFullYear()} Krispy Kreme. All rights reserved.
+                    © {new Date().getFullYear()}  Krispy Kreme. No rights reserved—this is just for fun!
                 </Typography>
 
                 <Box
@@ -34,15 +37,9 @@ const Footer = () => {
                         flexDirection: { xs: 'column', md: 'row' }, // Stack links on small screens
                     }}
                 >
-                    <Link href="#" color="inherit">
-                        Privacy Policy
-                    </Link>
-                    <Link href="#" color="inherit">
-                        Terms of Service
-                    </Link>
-                    <Link href="#" color="inherit">
-                        Contact Us
-                    </Link>
+                    <FacebookIcon fontSize="large" sx={{ color: 'inherit' }} />
+                    <InstagramIcon fontSize="large" sx={{ color: 'inherit' }} />
+                    <XIcon fontSize="large" sx={{ color: 'inherit' }} />
                 </Box>
             </Container>
         </Box>

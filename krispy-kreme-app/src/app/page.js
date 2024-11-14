@@ -1,14 +1,34 @@
 'use client'
 import Navbar from './/templates/navbar';
-import Footer from "@/app/templates/footer";
+import Footer from './/templates/footer';
 import {Grid} from "@mui/material";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import {ThemeProvider} from '@mui/material/styles';
 import theme from './theme';
 import Button from "@mui/material/Button";
+import {useEffect, useState} from "react";
 
 const HomePage = () => {
+
+    const [username, setUsername] = useState(null);
+    const [role, setRole] = useState(null);
+
+    useEffect(() => {
+        async function checkSession() {
+            const res = await fetch('/api/session');
+            const data = await res.json();
+
+            if (res.ok) {
+                setRole(data.role);
+                setUsername(data.username);
+                // alert(`User logged in as: ${data.email}, Username: ${data.username}, Role: ${data.role}`);
+            }
+        }
+
+        checkSession();
+    }, []);
+
     return (
         <>
             <ThemeProvider theme={theme}>
@@ -52,9 +72,21 @@ const HomePage = () => {
                                 color="primary"
                                 sx={{ mt: 3, color: 'white' }}
                                 href="/products" // Replace this with the actual path once the products page exists
-                            >
-                                Check Out Our Products
+                            >Check Out Our Products
                             </Button>
+                            {role === 'admin' && (
+                                <Box sx={{ textAlign: 'center', width: '100%'}}>
+                                    <Box sx={{ width: '50%', borderBottom: '2px solid white', my: 2, mx: 'auto', mt:5}} />
+                                    <Typography variant="h5" sx={{ fontWeight: 'bold' }}>Hello, {username}</Typography>
+                                    <Button
+                                        variant="contained"
+                                        color="primary"
+                                        sx={{ mt: 3, color: 'white' }}
+                                        href="/dashboard" // Replace this with the actual path once the products page exists
+                                    >Admin dashboard
+                                    </Button>
+                                </Box>
+                            )}
                         </Box>
                     </Grid>
                     <Grid item xs={12} md={6}>

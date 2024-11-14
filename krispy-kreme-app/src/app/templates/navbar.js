@@ -105,6 +105,7 @@ function Navbar() {
                                 <MenuIcon sx={{color: 'white'}}/>
                             </IconButton>
                             <Menu
+                                disableScrollLock={true}
                                 id="menu-appbar"
                                 anchorEl={anchorElNav}
                                 anchorOrigin={{
@@ -119,7 +120,7 @@ function Navbar() {
                                 sx={{display: {xs: 'block', md: 'none'}}}
                             >
                                 {pagesWithDashboard.map((page) => (
-                                    <MenuItem key={page} onClick={handleCloseNavMenu}>
+                                    <MenuItem key={page} onClick={() => {handleCloseNavMenu();router.push("/"+page.toLowerCase())}}>
                                         <Typography sx={{textAlign: 'center'}}>{page}</Typography>
                                     </MenuItem>))}
                             </Menu>
@@ -133,7 +134,6 @@ function Navbar() {
                             variant="h5"
                             noWrap
                             component="a"
-                            href="./"
                             sx={{
                                 mr: 2,
                                 display: {xs: 'flex', md: 'none'},
@@ -149,7 +149,7 @@ function Navbar() {
                         <Box sx={{flexGrow: 1, display: {xs: 'none', md: 'flex'}}}>
                             {pagesWithDashboard.map((page) => (<Button
                                 key={page}
-                                onClick={handleCloseNavMenu}
+                                onClick={() => {handleCloseNavMenu();router.push("/"+page.toLowerCase())}}
                                 sx={{my: 2, color: 'white', display: 'block'}}>
                                 {page}
                             </Button>))}
@@ -167,6 +167,7 @@ function Navbar() {
                                 </IconButton>
                             </Tooltip>
                             <Menu
+                                disableScrollLock={true}
                                 sx={{mt: '45px'}}
                                 id="menu-appbar"
                                 anchorEl={anchorElUser}

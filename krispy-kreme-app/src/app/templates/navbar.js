@@ -48,7 +48,7 @@ function Navbar() {
 
     useEffect(() => {
 
-        fetch('http://localhost:3000/api/getWeather')
+        fetch('/api/getWeather')
             .then((res) => res.json())
             .then((weather) => {
                 setWeatherData(weather);
@@ -126,7 +126,7 @@ function Navbar() {
                             </Menu>
                         </Box>
                         <a href="./" style={{display: 'inline-block'}}>
-                            <Image src="/logo.png" alt={"logo"} width={100} height={0} className={"sm-navbar-logo"}
+                            <Image src="/logo.png" alt={"logo"} width={100} height={0} className={" sm-navbar-logo"}
                                    style={{height: 'auto', maxWidth: '100%', marginRight: '.3rem'}} priority></Image>
                         </a>
 

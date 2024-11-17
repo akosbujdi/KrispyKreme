@@ -1,11 +1,11 @@
 import clientPromise from "../../lib/mongodb";
 
 export async function POST(req) {
-    const { userID, productId, quantity, total } = await req.json();
+    const { userID, productID, quantity, total } = await req.json();
 
     // console.log('Received data:', { userID, productId, quantity, total });
 
-    if (!userID || !productId || !quantity || !total) {
+    if (!userID || !productID || !quantity || !total) {
         console.error('Missing required fields');
         return new Response(JSON.stringify({ message: 'Missing required fields' }), { status: 400 });
     }
@@ -17,7 +17,7 @@ export async function POST(req) {
 
         const result = await collection.insertOne({
             userID,
-            productId,
+            productID,
             quantity,
             total,
             addedAt: new Date(),

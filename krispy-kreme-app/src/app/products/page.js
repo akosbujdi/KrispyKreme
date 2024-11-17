@@ -43,9 +43,23 @@ const Products = () => {
         }
     }, [userID]); // Dependency on userId so it runs when userId changes
 
-    const handleAddToCart = async (productId) => {
-        const product = products.find((p) => p._id === productId);
-        const quantities = quantity[productId] || 1;
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                const response = await fetch('api/getProducts');
+                const data = await response.json();
+                setProducts(data);
+            } catch (error) {
+                console.log("Error fetching products:", error);
+            }
+        };
+        fetchProducts();
+    }, []);
+
+
+    const handleAddToCart = async (productID) => {
+        const product = products.find((p) => p._id === productID);
+        const quantities = quantity[productID] || 1;
         const total = Math.round((product.price * quantities) * 100) / 100;
 
         // Send the data to the API
@@ -56,7 +70,7 @@ const Products = () => {
             },
             body: JSON.stringify({
                 userID,
-                productId: product._id,
+                productID: product._id,
                 quantity: quantities,
                 total: total, // Send the correct total price
             }),
@@ -92,18 +106,6 @@ const Products = () => {
         }));
     };
 
-    useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                const response = await fetch('api/getProducts');
-                const data = await response.json();
-                setProducts(data);
-            } catch (error) {
-                console.log("Error fetching products:",error);
-            }
-        };
-        fetchProducts();
-    }, []);
     return (<>
         <ThemeProvider theme={theme}>
             <Navbar/>
@@ -120,7 +122,7 @@ const Products = () => {
                         boxShadow: '0px 4px 5px rgba(0, 0, 0, 0.2)',
                     }}
                 >
-                    <Typography variant="h6" sx={{ display: 'inline', marginRight: '20px' }}>
+                    <Typography variant="h6" sx={{display: 'inline', marginRight: '20px'}}>
                         You have items in your cart!
                     </Typography>
                     <Button
@@ -134,7 +136,6 @@ const Products = () => {
             )}
             <Box
                 sx={{
-                    minHeight: '100vh',
                     padding: '20px',
                     backgroundColor: theme.palette.background.default,
                 }}
@@ -160,7 +161,7 @@ const Products = () => {
                                     component="img"
                                     image={product.path}
                                     alt={product.path}
-                                    sx={{ height: 300, width:300, objectFit:"cover", margin:"0 auto" }}
+                                    sx={{height: 300, width: 300, objectFit: "cover", margin: "0 auto"}}
                                 />
                                 <CardContent>
                                     <Typography variant="h6" gutterBottom color="black">
@@ -180,10 +181,10 @@ const Products = () => {
                                             marginTop: 2
                                         }}
                                     >
-                                        <Typography variant="h6" sx={{ fontWeight: 'bold', color:'white' }}>
+                                        <Typography variant="h6" sx={{fontWeight: 'bold', color: 'white'}}>
                                             €{product.price}
                                         </Typography>
-                                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                        <Box sx={{display: 'flex', alignItems: 'center'}}>
                                             <Button
                                                 variant="outlined"
                                                 size="small"
@@ -194,8 +195,8 @@ const Products = () => {
                                                     backgroundColor: 'white',
                                                     color: 'black',
                                                     borderColor: 'black',
-                                                    fontWeight:600,
-                                                    '&:hover': { backgroundColor: 'lightgray' },
+                                                    fontWeight: 600,
+                                                    '&:hover': {backgroundColor: 'lightgray'},
                                                 }}
                                             >
                                                 -
@@ -220,9 +221,9 @@ const Products = () => {
                                                     padding: '0',
                                                     backgroundColor: 'white',
                                                     color: 'black',
-                                                    fontWeight:600,
+                                                    fontWeight: 600,
                                                     borderColor: 'black',
-                                                    '&:hover': { backgroundColor: 'lightgray' },
+                                                    '&:hover': {backgroundColor: 'lightgray'},
                                                 }}
                                             >
                                                 +
@@ -233,7 +234,7 @@ const Products = () => {
                                     <Button
                                         variant="contained"
                                         color="primary"
-                                        sx={{ width: '100%', margin: '0' }}
+                                        sx={{width: '100%', margin: '0'}}
                                         onClick={() => handleAddToCart(product._id)}
                                     >
                                         Add to Basket

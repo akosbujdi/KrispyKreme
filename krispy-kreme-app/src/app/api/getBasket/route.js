@@ -1,9 +1,10 @@
 import clientPromise from '../../lib/mongodb';
+import {ObjectId} from "mongodb";
 
 export async function GET(req) {
     const {searchParams} = new URL(req.url);
     const userID = searchParams.get('userID');
-    console.log('Received userId:', userID);
+    // console.log('Received userId:', userID);
 
     if (!userID) {
         return new Response('User ID is required', { status: 400 });
@@ -12,17 +13,35 @@ export async function GET(req) {
     try {
         const client = await clientPromise;
         const db = client.db('krispy-kreme');
-        const collection = db.collection('cart');
+        const cartCollection = db.collection('cart');
+        const productsCollection = db.collection('products');
 
         // Find all cart items for the given userId
-        const cartItems = await collection.find({ userID }).toArray();
-        console.log("Cart items : ",JSON.stringify(cartItems));
+        const cartItems = await cartCollection.find({ userID }).toArray();
+        console.log('Cart Items:', cartItems);
 
         if (cartItems.length === 0) {
             return new Response(JSON.stringify([]), { status: 200 }); // No items in cart
         }
 
-        return new Response(JSON.stringify(cartItems), { status: 200 });
+        const productIDs = cartItems.map(item => new ObjectId(item.productID)); // Convert to ObjectId
+        console.log('Product IDs:', productIDs);
+
+        const products = await productsCollection.find({_id: {$in: productIDs}}).toArray();
+        console.log('Products:', products);
+
+        const cartWithDetails = cartItems.map(cartItem => {
+            const product = products.find(p => p._id.toString() === cartItem.productID);
+
+            return {
+                ...cartItem,
+                productName: product?.name || 'Unknown Product',
+                price: product?.price || 0,
+                total: (product?.price || 0) * cartItem.quantity,
+            };
+        });
+
+        return new Response(JSON.stringify(cartWithDetails), { status: 200 });
     } catch (error) {
         console.error('Error fetching cart items:', error);
         return new Response('Error fetching cart items', { status: 500 });

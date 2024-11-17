@@ -11,8 +11,72 @@ import Button from "@mui/material/Button";
 
 const Products = () => {
     const [products, setProducts] = useState([]);
-
     const [quantity, setQuantity] = useState({});
+    const [cartVisible, setCartVisible] = useState(false);
+    const [userID, setUserID] = useState(null);
+
+    useEffect(() => {
+        async function checkSession() {
+            const res = await fetch('/api/session');
+            const data = await res.json();
+
+            if (res.ok) {
+                setUserID(data._id)
+            }
+        }
+
+        checkSession();
+    }, []);
+
+    useEffect(() => {
+        async function checkCart() {
+            const res = await fetch(`/api/getBasket?userID=${userID}`); // Ensure userId is being passed here
+            const data = await res.json();
+
+            if (res.ok && data.length > 0) {
+                setCartVisible(true);  // Show cart bar if there are items in the cart
+            }
+        }
+
+        if (userID) {
+            checkCart();
+        }
+    }, [userID]); // Dependency on userId so it runs when userId changes
+
+    const handleAddToCart = async (productId) => {
+        const product = products.find((p) => p._id === productId);
+        const quantities = quantity[productId] || 1;
+        const total = Math.round((product.price * quantities) * 100) / 100;
+
+        // Send the data to the API
+        const response = await fetch('/api/addToCart', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                userID,
+                productId: product._id,
+                quantity: quantities,
+                total: total, // Send the correct total price
+            }),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error('Error adding to cart:', errorData.message);
+        } else {
+            const data = await response.json();
+            console.log('Item added to cart:', data);
+            setCartVisible(true);
+        }
+
+    };
+
+    const handleViewCart = () => {
+        // Redirect to cart page or handle cart view logic
+        window.location.href = '/cart';
+    };
 
     const handleIncrement = (id) => {
         setQuantity((prev) => ({
@@ -43,6 +107,31 @@ const Products = () => {
     return (<>
         <ThemeProvider theme={theme}>
             <Navbar/>
+            {cartVisible && (
+                <Box
+                    sx={{
+                        backgroundColor: 'primary.main',
+                        color: 'white',
+                        padding: '10px',
+                        textAlign: 'center',
+                        position: 'sticky',
+                        top: 'auto',
+                        zIndex: 1000,
+                        boxShadow: '0px 4px 5px rgba(0, 0, 0, 0.2)',
+                    }}
+                >
+                    <Typography variant="h6" sx={{ display: 'inline', marginRight: '20px' }}>
+                        You have items in your cart!
+                    </Typography>
+                    <Button
+                        variant="contained"
+                        color="secondary"
+                        onClick={handleViewCart}
+                    >
+                        View Cart
+                    </Button>
+                </Box>
+            )}
             <Box
                 sx={{
                     minHeight: '100vh',
@@ -145,7 +234,7 @@ const Products = () => {
                                         variant="contained"
                                         color="primary"
                                         sx={{ width: '100%', margin: '0' }}
-                                        onClick={() => console.log('Add to Basket clicked')}
+                                        onClick={() => handleAddToCart(product._id)}
                                     >
                                         Add to Basket
                                     </Button>

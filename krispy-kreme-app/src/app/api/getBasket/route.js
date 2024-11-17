@@ -1,5 +1,4 @@
 import clientPromise from '../../lib/mongodb';
-import {ObjectId} from "mongodb";
 
 export async function GET(req) {
     const {searchParams} = new URL(req.url);
@@ -16,7 +15,7 @@ export async function GET(req) {
         const collection = db.collection('cart');
 
         // Find all cart items for the given userId
-        const cartItems = await collection.find({ userID: new ObjectId(userID) }).toArray();
+        const cartItems = await collection.find({ userID }).toArray();
         console.log("Cart items : ",JSON.stringify(cartItems));
 
         if (cartItems.length === 0) {

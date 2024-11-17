@@ -33,7 +33,7 @@ const HomePage = () => {
         <>
             <ThemeProvider theme={theme}>
             <Navbar/>
-            <Box sx={{ width: '100%', maxWidth: '1500px', mx: 'auto', mt: 4, mb: 4, px:{xs:2,sm:3}}}>
+            <Box sx={{ width: '100%', maxWidth: '1500px', mx: 'auto', mt: 2, mb: 2, px:{xs:2,sm:3}}}>
                 <Grid container spacing={4}>
                     <Grid item xs={12} md={6}>
                         <Box

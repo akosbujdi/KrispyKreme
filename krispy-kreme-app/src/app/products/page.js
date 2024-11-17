@@ -136,6 +136,7 @@ const Products = () => {
             )}
             <Box
                 sx={{
+                    minHeight: '100vh',
                     padding: '20px',
                     backgroundColor: theme.palette.background.default,
                 }}

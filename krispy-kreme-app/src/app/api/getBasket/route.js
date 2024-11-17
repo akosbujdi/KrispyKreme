@@ -18,17 +18,14 @@ export async function GET(req) {
 
         // Find all cart items for the given userId
         const cartItems = await cartCollection.find({ userID }).toArray();
-        console.log('Cart Items:', cartItems);
 
         if (cartItems.length === 0) {
             return new Response(JSON.stringify([]), { status: 200 }); // No items in cart
         }
 
         const productIDs = cartItems.map(item => new ObjectId(item.productID)); // Convert to ObjectId
-        console.log('Product IDs:', productIDs);
 
         const products = await productsCollection.find({_id: {$in: productIDs}}).toArray();
-        console.log('Products:', products);
 
         const cartWithDetails = cartItems.map(cartItem => {
             const product = products.find(p => p._id.toString() === cartItem.productID);

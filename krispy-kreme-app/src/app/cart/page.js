@@ -56,7 +56,7 @@ const Cart = () => {
 
 
     const handleCheckout = () => {
-        window.location.href = './';
+        window.location.href = './checkout';
     };
 
     const handleRemoveItem = async (productID) => {
@@ -79,7 +79,7 @@ const Cart = () => {
     return (
         <ThemeProvider theme={theme}>
             <Navbar />
-            <Box sx={{ padding: '20px', minHeight:'100vh'}}>
+            <Box sx={{ padding: '20px', minHeight: '100vh', maxWidth: '1500px', mx: 'auto' }}>
                 <Typography variant="h4" sx={{ marginBottom: '20px' }}>Your Cart</Typography>
 
                 {loading ? (

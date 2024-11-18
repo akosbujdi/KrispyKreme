@@ -5,7 +5,7 @@ export async function GET(req) {
     const token = req.cookies.get('session')?.value;
 
     if (!token) {
-        console.error('No session token found');
+        // console.error('No session token found');
         return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
 

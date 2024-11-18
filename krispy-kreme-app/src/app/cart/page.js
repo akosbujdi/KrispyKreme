@@ -1,11 +1,11 @@
 'use client';
-
+import {useRouter} from 'next/navigation';
 import Footer from "../templates/footer";
-import { ThemeProvider } from "@mui/material/styles";
+import {ThemeProvider} from "@mui/material/styles";
 import Navbar from "../templates/navbar";
 import Box from "@mui/material/Box";
 import theme from '../theme';
-import { useState, useEffect } from 'react';
+import {useState, useEffect} from 'react';
 import {
     Button,
     Table,
@@ -23,6 +23,8 @@ const Cart = () => {
     const [cartItems, setCartItems] = useState([]);
     const [loading, setLoading] = useState(true);
     const [userID, setUserID] = useState(null);
+
+    const router = useRouter();
 
     useEffect(() => {
         async function fetchData() {
@@ -56,7 +58,7 @@ const Cart = () => {
 
 
     const handleCheckout = () => {
-        window.location.href = './checkout';
+        router.push('./checkout');
     };
 
     const handleRemoveItem = async (productID) => {
@@ -76,17 +78,21 @@ const Cart = () => {
         }
     }
 
+    const goToProducts = () => {
+        router.push('./products');
+    }
+
     return (
         <ThemeProvider theme={theme}>
-            <Navbar />
-            <Box sx={{ padding: '20px', minHeight: '100vh', maxWidth: '1500px', mx: 'auto' }}>
-                <Typography variant="h4" sx={{ marginBottom: '20px' }}>Your Cart</Typography>
+            <Navbar/>
+            <Box sx={{padding: '20px', minHeight: '100vh', maxWidth: '1500px', mx: 'auto'}}>
+                <Typography variant="h4" sx={{marginBottom: '20px'}}>Your Cart</Typography>
 
                 {loading ? (
                     <Typography>Loading cart items...</Typography>
                 ) : (
                     <TableContainer component={Paper}>
-                        <Table sx={{ minWidth: 650, backgroundColor:'#f5f5f5' }} aria-label="simple table">
+                        <Table sx={{minWidth: 650, backgroundColor: '#f5f5f5'}} aria-label="simple table">
                             <TableHead>
                                 <TableRow>
                                     <TableCell>Product</TableCell>
@@ -105,7 +111,7 @@ const Cart = () => {
                                             </TableCell>
                                             <TableCell align="right">{item.quantity}</TableCell>
                                             <TableCell align="right">€{item.price}</TableCell>
-                                            <TableCell align="right">€{Math.round((item.total)*100)/100}</TableCell>
+                                            <TableCell align="right">€{Math.round((item.total) * 100) / 100}</TableCell>
                                             <TableCell align="right">
                                                 <Button
                                                     color="primary"
@@ -140,7 +146,7 @@ const Cart = () => {
                     </TableContainer>
                 )}
 
-                <Box sx={{ marginTop: '20px', textAlign: 'center' }}>
+                <Box sx={{marginTop: '20px', textAlign: 'center'}}>
                     <Button
                         variant="contained"
                         color="secondary"
@@ -151,9 +157,19 @@ const Cart = () => {
                     >
                         Checkout
                     </Button>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        size="large"
+                        fullWidth={true}
+                        sx={{mt:2}}
+                        onClick={goToProducts}
+                    >
+                        Back to products
+                    </Button>
                 </Box>
             </Box>
-            <Footer />
+            <Footer/>
         </ThemeProvider>
     );
 };

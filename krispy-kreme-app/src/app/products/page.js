@@ -6,60 +6,63 @@ import Box from "@mui/material/Box";
 import theme from '../theme';
 import {useEffect, useState} from "react";
 import Typography from "@mui/material/Typography";
-import {Card, CardContent, CardMedia, Grid} from "@mui/material";
+import {Card, Snackbar, CardContent, CardMedia, Grid} from "@mui/material";
 import Button from "@mui/material/Button";
+import {AddShoppingCart} from '@mui/icons-material';
 
 const Products = () => {
     const [products, setProducts] = useState([]);
     const [quantity, setQuantity] = useState({});
     const [cartVisible, setCartVisible] = useState(false);
     const [userID, setUserID] = useState(null);
+    const [openSnackbar, setOpenSnackbar] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState('');
 
     useEffect(() => {
-        async function checkSession() {
-            const res = await fetch('/api/session');
-            const data = await res.json();
-
-            if (res.ok) {
-                setUserID(data._id)
-            }
-        }
-
-        checkSession();
-    }, []);
-
-    useEffect(() => {
-        async function checkCart() {
-            const res = await fetch(`/api/getBasket?userID=${userID}`); // Ensure userId is being passed here
-            const data = await res.json();
-
-            if (res.ok && data.length > 0) {
-                setCartVisible(true);  // Show cart bar if there are items in the cart
-            }
-        }
-
-        if (userID) {
-            checkCart();
-        }
-    }, [userID]); // Dependency on userId so it runs when userId changes
-
-    useEffect(() => {
-        const fetchProducts = async () => {
+        async function fetchData() {
             try {
-                const response = await fetch('api/getProducts');
-                const data = await response.json();
-                setProducts(data);
+                // Check the session
+                const sessionRes = await fetch('/api/session');
+                const sessionData = await sessionRes.json();
+
+                if (sessionRes.ok) {
+                    setUserID(sessionData._id);
+
+                    // Check the cart if userID is available
+                    const cartRes = await fetch(`/api/getBasket?userID=${sessionData._id}`);
+                    const cartData = await cartRes.json();
+
+                    if (cartRes.ok && cartData.length > 0) {
+                        setCartVisible(true); // Show cart bar if there are items in the cart
+                    }
+
+                    // Fetch products
+                    const productsRes = await fetch('api/getProducts');
+                    const productsData = await productsRes.json();
+
+                    setProducts(productsData);
+                }
             } catch (error) {
-                console.log("Error fetching products:", error);
+                console.error("Error in fetching data:", error);
             }
-        };
-        fetchProducts();
+        }
+
+        fetchData();
     }, []);
+
+    const handleCloseSnackbar = () => {
+        setOpenSnackbar(false);
+    };
 
 
     const handleAddToCart = async (productID) => {
+        setQuantity(0);
+        setOpenSnackbar(true);
         const product = products.find((p) => p._id === productID);
         const quantities = quantity[productID] || 1;
+
+        setSnackbarMessage(`${quantities} x ${product.name} added`);
+
         const total = Math.round((product.price * quantities) * 100) / 100;
 
         // Send the data to the API
@@ -128,6 +131,7 @@ const Products = () => {
                     <Button
                         variant="contained"
                         color="secondary"
+                        sx={{ color: 'white' }} // This sets the text color to white
                         onClick={handleViewCart}
                     >
                         View Cart
@@ -237,9 +241,21 @@ const Products = () => {
                                         color="primary"
                                         sx={{width: '100%', margin: '0'}}
                                         onClick={() => handleAddToCart(product._id)}
+                                        startIcon={<AddShoppingCart />}
                                     >
                                         Add to Basket
                                     </Button>
+                                    <Snackbar
+                                        open={openSnackbar}
+                                        autoHideDuration={3000} // Snackbar will hide after 3 seconds
+                                        onClose={handleCloseSnackbar}
+                                        message={snackbarMessage}
+                                        action={
+                                            <Button color="secondary" size="small" onClick={() => { window.location.href = "/cart"; }}>
+                                                View Basket
+                                            </Button>
+                                        }
+                                    />
                                 </CardContent>
                             </Card>
                         </Grid>

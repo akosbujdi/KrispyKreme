@@ -12,6 +12,11 @@ const Checkout = () => {
     const [userID, setUserID] = useState(''); // To store the userID
     const [paymentMethod, setPaymentMethod] = useState('creditCard');
     const [address, setAddress] = useState('');
+    const [phone, setPhone] = useState('');
+    const [cardNumber, setCardNumber] = useState('');
+    const [expiryDate, setExpiryDate] = useState('');
+    const [cvv, setCvv] = useState('');
+    const [paymentError, setPaymentError] = useState('');
 
     useEffect(() => {
         async function fetchData() {
@@ -43,9 +48,29 @@ const Checkout = () => {
         fetchData();
     }, []); // Empty dependency array ensures this runs once on mount
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
+        try {
+            const response = await fetch('/api/validateCard', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({cardNumber, expiryDate, cvv}),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                setPaymentError(data.message);
+            } else {
+                setPaymentError('');
+            }
+        } catch (error) {
+            console.error('Error submitting payment:', error);
+            setPaymentError('An error occurred while validating card details.');
+        }
         // Handle order submission logic
-        console.log('Order Submitted', { userID, userEmail, cartItems, address, paymentMethod });
+        console.log('Order Submitted', {userID, userEmail, cartItems, address, paymentMethod});
     };
 
     return (
@@ -55,7 +80,7 @@ const Checkout = () => {
                 <Typography variant="h4" sx={{ marginBottom: '20px' }}>Checkout</Typography>
 
                 <Box sx={{ marginBottom: '20px' }}>
-                    <Typography variant="h6">Cart Summary</Typography>
+                    <Typography sx={{mb:2}} variant="h6">Cart Summary</Typography>
                     <ul>
                         {cartItems.map(item => (
                             <li key={item.productID}>
@@ -67,7 +92,7 @@ const Checkout = () => {
                 </Box>
 
                 <Box sx={{ marginBottom: '20px' }}>
-                    <Typography variant="h6">Your Information</Typography>
+                    <Typography sx={{mb:2}} variant="h6">Your Information</Typography>
                     <TextField
                         label="Email Address"
                         value={userEmail}
@@ -78,9 +103,18 @@ const Checkout = () => {
                     <TextField
                         label="Shipping Address"
                         value={address}
+                        type={'text'}
                         onChange={(e) => setAddress(e.target.value)}
                         fullWidth
                         sx={{ marginBottom: '20px' }}
+                    />
+                    <TextField
+                        label="Mobile Number"
+                        value={phone}
+                        type={"tel"}
+                        onChange={(e) => setPhone(e.target.value)}
+                        fullWidth
+                        sx={{marginBottom: '20px'}}
                     />
                 </Box>
 
@@ -98,9 +132,37 @@ const Checkout = () => {
                     </FormControl>
                     {paymentMethod === 'creditCard' && (
                         <Box>
-                            <TextField label="Card Number" fullWidth sx={{ marginBottom: '20px' }} />
-                            <TextField label="Expiration Date" fullWidth sx={{ marginBottom: '20px' }} />
-                            <TextField label="CVV" fullWidth sx={{ marginBottom: '20px' }} />
+                            <TextField
+                                label="Card Number"
+                                fullWidth
+                                value={cardNumber}
+                                onChange={(e) => setCardNumber(e.target.value)}
+                                sx={{ marginBottom: '20px' }}
+                                placeholder="1234 5678 9012 3456"
+                            />
+                            <TextField
+                                label="Expiration Date"
+                                fullWidth
+                                value={expiryDate}
+                                onChange={(e) => setExpiryDate(e.target.value)}
+                                sx={{ marginBottom: '20px' }}
+                                placeholder="MM/YY"
+                            />
+                            <TextField
+                                label="CVV"
+                                fullWidth
+                                value={cvv}
+                                onChange={(e) => setCvv(e.target.value)}
+                                sx={{ marginBottom: '20px' }}
+                                placeholder="123"
+                                type="password"
+                            />
+
+                            {paymentError && (
+                                <Typography color="error" sx={{ marginBottom: '20px' }}>
+                                    {paymentError}
+                                </Typography>
+                            )}
                         </Box>
                     )}
                 </Box>

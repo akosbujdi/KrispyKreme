@@ -73,7 +73,7 @@ export default function SignIn(props) {
         let email = data.get('email');
         let password = data.get('password');
 
-        const url = `http://localhost:3000/api/login?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`;
+        const url = `/api/login?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`;
 
         fetch(url)
             .then(async (res) => {

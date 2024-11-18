@@ -78,7 +78,7 @@ export default function SignUp() {
         let username = data.get('username');
         let password = data.get('password');
 
-        const url = `http://localhost:3000/api/register?email=${encodeURIComponent(email)}&username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`;
+        const url = `/api/register?email=${encodeURIComponent(email)}&username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`;
 
         fetch(url)
             .then(async (res) => {

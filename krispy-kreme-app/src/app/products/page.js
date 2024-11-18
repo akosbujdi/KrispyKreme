@@ -98,14 +98,14 @@ const Products = () => {
     const handleIncrement = (id) => {
         setQuantity((prev) => ({
             ...prev,
-            [id]: (prev[id] || 0) + 1,
+            [id]: (prev[id] || 1) + 1,
         }));
     };
 
     const handleDecrement = (id) => {
         setQuantity((prev) => ({
             ...prev,
-            [id]: Math.max((prev[id] || 0) - 1, 0), // Prevents negative values
+            [id]: Math.max((prev[id] || 1) - 1, 1), // Prevents negative values
         }));
     };
 
@@ -215,7 +215,7 @@ const Products = () => {
                                                     fontWeight: 'bold',
                                                 }}
                                             >
-                                                {quantity[product._id] || 0}
+                                                {quantity[product._id] || 1}
                                             </Typography>
                                             <Button
                                                 variant="outlined"
@@ -252,7 +252,7 @@ const Products = () => {
                                         message={snackbarMessage}
                                         action={
                                             <Button color="secondary" size="small" onClick={() => { window.location.href = "/cart"; }}>
-                                                View Basket
+                                                View Cart
                                             </Button>
                                         }
                                     />

@@ -4,7 +4,11 @@ import { Button, Box, TextField, Typography, FormControl, RadioGroup, FormContro
 import { ThemeProvider } from '@mui/system';
 import Navbar from '../templates/navbar'; // Adjust path if needed
 import Footer from '../templates/footer'; // Adjust path if needed
-import theme from '../theme'; // Adjust path if needed
+import {Alert} from "@mui/material";
+import theme from '../theme';
+import Stack from "@mui/material/Stack";
+import * as React from "react";
+import {useRouter} from 'next/navigation';
 
 const Checkout = () => {
     const [cartItems, setCartItems] = useState([]);
@@ -16,7 +20,10 @@ const Checkout = () => {
     const [cardNumber, setCardNumber] = useState('');
     const [expiryDate, setExpiryDate] = useState('');
     const [cvv, setCvv] = useState('');
-    const [paymentError, setPaymentError] = useState('');
+    const [alertMessage, setAlertMessage] = useState('');
+    const [alertType, setAlertType] = useState('');
+
+    const router = useRouter();
 
     useEffect(() => {
         async function fetchData() {
@@ -50,27 +57,74 @@ const Checkout = () => {
 
     const handleSubmit = async () => {
         try {
-            const response = await fetch('/api/validateCard', {
+            if (paymentMethod === 'creditCard') {
+                const response = await fetch('/api/validateCard', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({cardNumber, expiryDate, cvv}),
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    setAlertMessage(data.message);
+                    setAlertType('error');
+                    return;
+                }
+                setAlertMessage('');
+            }
+
+            if (!address) {
+                setAlertMessage("Shipping address is required");
+                setAlertType('error')
+                return;
+            }
+
+            if (!phone) {
+                setAlertMessage("Mobile number is required")
+                setAlertType('error')
+                return;
+            }
+
+            const phoneRegex = /^[+]?[0-9]+$/;
+            if (!phoneRegex.test(phone)) {
+                setAlertMessage('Please enter valid phone number')
+                setAlertType('error')
+                return;
+            }
+
+            const orderData = {
+                userID,
+                userEmail,
+                address,
+                phone,
+                paymentMethod,
+            }
+            const orderResponse = await fetch('/api/addToOrders', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({cardNumber, expiryDate, cvv}),
+                body: JSON.stringify(orderData),
             });
 
-            const data = await response.json();
+            const orderResult = await orderResponse.json();
 
-            if (!response.ok) {
-                setPaymentError(data.message);
-            } else {
-                setPaymentError('');
+            if (!orderResponse.ok) {
+                console.error('Error submitting order:', orderResult.message);
+                setAlertMessage(orderResult.message || 'Failed to submit order.');
+                setAlertType('error');
+                return;
             }
+            router.push('./confirm');
+
         } catch (error) {
-            console.error('Error submitting payment:', error);
-            setPaymentError('An error occurred while validating card details.');
+            console.error('Error during order submission:', error);
+            setAlertMessage("Error during order submission:");
+            setAlertType("error");
         }
-        // Handle order submission logic
-        console.log('Order Submitted', {userID, userEmail, cartItems, address, paymentMethod});
     };
 
     return (
@@ -153,21 +207,21 @@ const Checkout = () => {
                                 fullWidth
                                 value={cvv}
                                 onChange={(e) => setCvv(e.target.value)}
-                                sx={{ marginBottom: '20px' }}
                                 placeholder="123"
                                 type="password"
                             />
-
-                            {paymentError && (
-                                <Typography color="error" sx={{ marginBottom: '20px' }}>
-                                    {paymentError}
-                                </Typography>
-                            )}
                         </Box>
                     )}
                 </Box>
 
                 <Box sx={{ textAlign: 'center' }}>
+                    {alertMessage && (
+                        <Stack sx={{ width: '100%', mb: 2 }} spacing={2}>
+                            <Alert severity={alertType} onClose={() => setAlertMessage('')}>
+                                {alertMessage}
+                            </Alert>
+                        </Stack>
+                    )}
                     <Button
                         variant="contained"
                         color="secondary"

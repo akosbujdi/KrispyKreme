@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import {NextResponse} from 'next/server';
 import clientPromise from '../../lib/mongodb';
 
 export async function GET() {
@@ -11,6 +11,6 @@ export async function GET() {
         return NextResponse.json(products);
     } catch (error) {
         console.error('Error fetching products:', error);
-        return NextResponse.json({ error: 'Failed to fetch products' }, { status: 500 });
+        return NextResponse.json({error: 'Failed to fetch products'}, {status: 500});
     }
 }

@@ -1,5 +1,4 @@
 import {sign, verify} from 'jsonwebtoken';
-import cookie from 'cookie';
 
 const SECRET_KEY = process.env.SECRET_KEY;
 

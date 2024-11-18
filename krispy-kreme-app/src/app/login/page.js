@@ -10,11 +10,11 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import MuiCard from '@mui/material/Card';
-import { styled } from '@mui/material/styles';
+import {styled} from '@mui/material/styles';
 import {Alert} from "@mui/material";
 import {useState} from 'react';
 
-const Card = styled(MuiCard)(({ theme }) => ({
+const Card = styled(MuiCard)(({theme}) => ({
     display: 'flex',
     flexDirection: 'column',
     alignSelf: 'center',
@@ -33,7 +33,7 @@ const Card = styled(MuiCard)(({ theme }) => ({
     }),
 }));
 
-const SignInContainer = styled(Stack)(({ theme }) => ({
+const SignInContainer = styled(Stack)(({theme}) => ({
     height: 'calc((1 - var(--template-frame-height, 0)) * 100dvh)',
     minHeight: '100%',
     padding: theme.spacing(2),
@@ -86,7 +86,7 @@ export default function SignIn(props) {
                 window.location.href = './';
             })
             .catch((error) => {
-                console.error('Error during login:',error.message);
+                console.error('Error during login:', error.message);
                 setAlertMessage('Something went wrong. Please try again.');
                 setAlertType('error');
             })
@@ -121,11 +121,11 @@ export default function SignIn(props) {
 
     return (
         <>
-            <CssBaseline enableColorScheme />
+            <CssBaseline enableColorScheme/>
             <SignInContainer direction="column" justifyContent="space-between">
                 <Card variant="outlined">
                     {alertMessage && (
-                        <Stack sx={{ width: '100%', mb: 2 }} spacing={2}>
+                        <Stack sx={{width: '100%', mb: 2}} spacing={2}>
                             <Alert severity={alertType} onClose={() => setAlertMessage('')}>
                                 {alertMessage}
                             </Alert>
@@ -134,7 +134,7 @@ export default function SignIn(props) {
                     <Typography
                         component="h1"
                         variant="h4"
-                        sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
+                        sx={{width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)'}}
                     >
                         Sign in
                     </Typography>
@@ -164,7 +164,7 @@ export default function SignIn(props) {
                                 fullWidth
                                 variant="outlined"
                                 color={emailError ? 'error' : 'primary'}
-                                sx={{ ariaLabel: 'email' }}
+                                sx={{ariaLabel: 'email'}}
                             />
                         </FormControl>
                         <FormControl>
@@ -192,13 +192,13 @@ export default function SignIn(props) {
                         >
                             Sign in
                         </Button>
-                        <Typography sx={{ textAlign: 'center' }}>
+                        <Typography sx={{textAlign: 'center'}}>
                             Don&apos;t have an account?{' '}
                             <span>
                 <Link
                     href=".//register"
                     variant="body2"
-                    sx={{ alignSelf: 'center' }}
+                    sx={{alignSelf: 'center'}}
                 >
                   Sign up
                 </Link>

@@ -111,12 +111,12 @@ export async function POST(req) {
                     <tr>
                       <td style="text-align: center">${item.productName}</td>
                       <td style="text-align: center">${item.quantity}</td>
-                      <td style="text-align: center">${item.total}</td>
+                      <td style="text-align: center">€${item.total}</td>
                     </tr>
                   `).join('')}
                   <tr>
                     <td colspan="2" style="text-align: right; font-weight: bold;">Final Total:</td>
-                    <td style="font-weight: bold; text-align: center;">${totalAmount}</td>
+                    <td style="font-weight: bold; text-align: center;">€${totalAmount}</td>
                   </tr>
                 </tbody>
               </table><br>

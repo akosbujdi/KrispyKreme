@@ -13,6 +13,7 @@ import MuiCard from '@mui/material/Card';
 import {styled} from '@mui/material/styles';
 import {Alert} from "@mui/material";
 import {useState} from 'react';
+import validator from "validator";
 
 const Card = styled(MuiCard)(({theme}) => ({
     display: 'flex',
@@ -96,9 +97,12 @@ export default function SignIn(props) {
         const email = document.getElementById('email');
         const password = document.getElementById('password');
 
+        email.value = email.value.trim();
+        password.value = password.value.trim();
+
         let isValid = true;
 
-        if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
+        if (!validator.isEmail(email.value)) {
             setEmailError(true);
             setEmailErrorMessage('Please enter a valid email address.');
             isValid = false;
@@ -107,9 +111,15 @@ export default function SignIn(props) {
             setEmailErrorMessage('');
         }
 
-        if (!password.value || password.value.length < 6) {
+        if (!validator.isStrongPassword(password.value, {
+            minLength: 6,
+            minLowercase: 1,
+            minUppercase: 1,
+            minSymbols: 1,
+            minNumbers: 1
+        })) {
             setPasswordError(true);
-            setPasswordErrorMessage('Password must be at least 6 characters long.');
+            setPasswordErrorMessage('Password must be at least 6 characters long and contain at least one lowercase letter, one uppercase letter, one symbol, and one number.');
             isValid = false;
         } else {
             setPasswordError(false);
@@ -165,6 +175,7 @@ export default function SignIn(props) {
                                 variant="outlined"
                                 color={emailError ? 'error' : 'primary'}
                                 sx={{ariaLabel: 'email'}}
+                                inputProps={{maxLength:40}}
                             />
                         </FormControl>
                         <FormControl>
@@ -182,6 +193,7 @@ export default function SignIn(props) {
                                 fullWidth
                                 variant="outlined"
                                 color={passwordError ? 'error' : 'primary'}
+                                inputProps={{maxLength:30}}
                             />
                         </FormControl>
                         <Button

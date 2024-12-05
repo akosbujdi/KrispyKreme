@@ -140,7 +140,7 @@ export default function SignUp() {
             minNumbers: 1
         })) {
             setPasswordError(true);
-            setPasswordErrorMessage('Password must be at least 6 characters long and contain at least 1 uppercase letter, 1 lowercase letter, 1 number, and 1 symbol');
+            setPasswordErrorMessage('Password must be at least 6 characters long.');
             isValid = false;
         } else {
             setPasswordError(false);

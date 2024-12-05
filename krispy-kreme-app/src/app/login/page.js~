@@ -34,7 +34,7 @@ const Card = styled(MuiCard)(({theme}) => ({
     }),
 }));
 
-const SignUpContainer = styled(Stack)(({theme}) => ({
+const SignInContainer = styled(Stack)(({theme}) => ({
     height: 'calc((1 - var(--template-frame-height, 0)) * 100dvh)',
     minHeight: '100%',
     padding: theme.spacing(2),
@@ -57,29 +57,24 @@ const SignUpContainer = styled(Stack)(({theme}) => ({
     },
 }));
 
-export default function SignUp() {
+export default function SignIn(props) {
     const [alertMessage, setAlertMessage] = useState('');
     const [alertType, setAlertType] = useState('');
     const [emailError, setEmailError] = React.useState(false);
     const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
-    const [usernameError, setUsernameError] = React.useState(false);
-    const [usernameErrorMessage, setUsernameErrorMessage] = React.useState('');
     const [passwordError, setPasswordError] = React.useState(false);
     const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
-    const [confPasswordError, setConfPasswordError] = React.useState('');
-    const [confPasswordErrorMessage, setConfPasswordErrorMessage] = React.useState('');
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        if (emailError || usernameError || passwordError || confPasswordError) {
+        if (emailError || passwordError) {
             return;
         }
         const data = new FormData(event.currentTarget);
         let email = data.get('email');
-        let username = data.get('username');
         let password = data.get('password');
 
-        const url = `/api/register?email=${encodeURIComponent(email)}&username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`;
+        const url = `/api/login?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`;
 
         fetch(url)
             .then(async (res) => {
@@ -89,27 +84,21 @@ export default function SignUp() {
                     setAlertType('error');
                     return;
                 }
-                window.location.href = './login';
-
+                window.location.href = './';
             })
             .catch((error) => {
-                console.error('Error during registration:', error.message);
+                console.error('Error during login:', error.message);
                 setAlertMessage('Something went wrong. Please try again.');
                 setAlertType('error');
             })
     };
 
-
     const validateInputs = () => {
         const email = document.getElementById('email');
-        const username = document.getElementById('username');
         const password = document.getElementById('password');
-        const confPassword = document.getElementById('confPassword');
 
         email.value = email.value.trim();
-        username.value = username.value.trim();
         password.value = password.value.trim();
-        confPassword.value = confPassword.value.trim();
 
         let isValid = true;
 
@@ -122,38 +111,13 @@ export default function SignUp() {
             setEmailErrorMessage('');
         }
 
-        const userRegex = /^[a-zA-Z0-9_-]+$/;
-        if (!validator.isLength(username.value, {min: 3, max: 16}) || !userRegex.test(username.value)) {
-            setUsernameError(true);
-            setUsernameErrorMessage("Username must be 3-16 characters, letters, numbers, underscores, and dashes only");
-            isValid = false;
-        } else {
-            setUsernameError(false);
-            setUsernameErrorMessage('');
-        }
-
-        if (!validator.isStrongPassword(password.value, {
-            minLength: 6,
-            minLowercase: 1,
-            minUppercase: 1,
-            minSymbols: 1,
-            minNumbers: 1
-        })) {
+        if (!password.value) {
             setPasswordError(true);
-            setPasswordErrorMessage('Password must be at least 6 characters long and contain at least 1 uppercase letter, 1 lowercase letter, 1 number, and 1 symbol');
+            setPasswordErrorMessage('Please enter a password.');
             isValid = false;
         } else {
             setPasswordError(false);
             setPasswordErrorMessage('');
-        }
-
-        if (confPassword.value !== password.value) {
-            setConfPasswordError(true);
-            setConfPasswordErrorMessage("Passwords do not match!");
-            isValid = false;
-        } else {
-            setConfPasswordError(false);
-            setConfPasswordErrorMessage('');
         }
 
         return isValid;
@@ -162,10 +126,10 @@ export default function SignUp() {
     return (
         <>
             <CssBaseline enableColorScheme/>
-            <SignUpContainer direction="column" justifyContent="space-between">
+            <SignInContainer direction="column" justifyContent="space-between">
                 <Card variant="outlined">
                     {alertMessage && (
-                        <Stack sx={{ width: '100%', mb: 2 }} spacing={2}>
+                        <Stack sx={{width: '100%', mb: 2}} spacing={2}>
                             <Alert severity={alertType} onClose={() => setAlertMessage('')}>
                                 {alertMessage}
                             </Alert>
@@ -176,7 +140,7 @@ export default function SignUp() {
                         variant="h4"
                         sx={{width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)'}}
                     >
-                        Sign up
+                        Sign in
                     </Typography>
                     <Box
                         component="form"
@@ -209,25 +173,6 @@ export default function SignUp() {
                             />
                         </FormControl>
                         <FormControl>
-                            <FormLabel htmlFor="username">Username</FormLabel>
-                            <TextField
-                                error={usernameError}
-                                helperText={usernameErrorMessage}
-                                id="username"
-                                type="text"
-                                name="username"
-                                placeholder="username"
-                                autoComplete="username"
-                                autoFocus
-                                required
-                                fullWidth
-                                variant="outlined"
-                                color={emailError ? 'error' : 'primary'}
-                                sx={{ariaLabel: 'username'}}
-                                inputProps={{maxLength:30}}
-                            />
-                        </FormControl>
-                        <FormControl>
                             <FormLabel htmlFor="password">Password</FormLabel>
                             <TextField
                                 error={passwordError}
@@ -245,47 +190,29 @@ export default function SignUp() {
                                 inputProps={{maxLength:30}}
                             />
                         </FormControl>
-                        <FormControl>
-                            <FormLabel htmlFor="confPassword">Confirm Password</FormLabel>
-                            <TextField
-                                error={confPasswordError}
-                                helperText={confPasswordErrorMessage}
-                                name="confPassword"
-                                placeholder="••••••"
-                                type="password"
-                                id="confPassword"
-                                autoComplete="current-password"
-                                autoFocus
-                                required
-                                fullWidth
-                                variant="outlined"
-                                color={confPasswordError ? 'error' : 'primary'}
-                                inputProps={{maxLength:30}}
-                            />
-                        </FormControl>
                         <Button
                             type="submit"
                             fullWidth
                             variant="contained"
                             onClick={validateInputs}
                         >
-                            Sign up
+                            Sign in
                         </Button>
                         <Typography sx={{textAlign: 'center'}}>
-                            Already have an account?{' '}
+                            Don&apos;t have an account?{' '}
                             <span>
                 <Link
-                    href=".//login"
+                    href=".//register"
                     variant="body2"
                     sx={{alignSelf: 'center'}}
                 >
-                  Sign in
+                  Sign up
                 </Link>
               </span>
                         </Typography>
                     </Box>
                 </Card>
-            </SignUpContainer>
+            </SignInContainer>
         </>
     );
 }

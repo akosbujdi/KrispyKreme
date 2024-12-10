@@ -13,6 +13,9 @@ export async function GET(req) {
         const email = escapeHtml(searchParams.get('email')?.trim() || '');
         const password = escapeHtml(searchParams.get('password')?.trim() || '');
 
+        console.log('email:', email);
+        console.log('password:', password);
+
         // Check for empty or null values after trim
         if (!email || !password) {
             return NextResponse.json({ message: 'Email and password are required.' }, { status: 400 });
@@ -21,7 +24,7 @@ export async function GET(req) {
         // Connect to MongoDB
         const client = await clientPromise;
         const db = client.db('krispy-kreme'); // Replace with your database name
-        const collection = db.collection('users');git
+        const collection = db.collection('users');
 
         // Check if email already exists
         const existingUser = await collection.findOne({email});
@@ -48,6 +51,6 @@ export async function GET(req) {
         return response;
     } catch (error) {
         console.error('Error in user login:', error);
-        return NextResponse.json({message: 'Internal server error.'}, {status: 500});
+        return NextResponse.json({message: 'An error occurred during user login.'}, {status: 500});
     }
 }

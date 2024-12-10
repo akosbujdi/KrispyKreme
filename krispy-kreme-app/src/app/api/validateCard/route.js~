@@ -23,9 +23,19 @@ export async function POST(req) {
         const currentMonth = new Date().getMonth() + 1;
 
         if (year < currentYear || (year === currentYear && month < currentMonth)) {
-            return new Response(JSON.stringify({ message: 'Card is expired.' }), { status: 400 });
+            setAlertMessage("Card is expired");
+            setAlertType('error')
+            return;
         }
 
+
+        if (!expiryRegex.test(expiryDate)) {
+
+        }
+
+        if (year < currentYear || (year === currentYear && month < currentMonth)) {
+            return new Response(JSON.stringify({ message: 'Card is expired.' }), { status: 400 });
+        }
 
         if (!validator.isNumeric(cvv)) {
             return new Response(

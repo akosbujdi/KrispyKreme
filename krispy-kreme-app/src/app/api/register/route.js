@@ -12,6 +12,10 @@ export async function GET(req) {
         const password = escapeHtml(searchParams.get('password')?.trim() || '');
         const username = escapeHtml(searchParams.get('username')?.trim() || '');
 
+        console.log('email:', email);
+        console.log('password:', password);
+        console.log('username:', username);
+
         if (!validator.isEmail(email)) {
             return NextResponse.json({message: 'Invalid email format.'}, {status: 400});
         }

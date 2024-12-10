@@ -224,13 +224,11 @@ const Checkout = () => {
                                 fullWidth
                                 value={cardNumber}
                                 onChange={(e) => {
-                                    let input = e.target.value.replace(/\D/g, "").slice(0, 16);
+                                    let rawInput = e.target.value.replace(/\D/g, "").slice(0, 16);
 
-                                    input = input.replace(/(\d{4})(?=\d)/g, "$1 ");
-
-                                    console.log(input);
-
-                                    setCardNumber(input);
+                                    const formattedInput = rawInput.replace(/(\d{4})(?=\d)/g, "$1 ");
+                                    
+                                    setCardNumber(formattedInput);
                                 }}
                                 sx={{marginBottom: '20px'}}
                                 placeholder="1234 5678 9012 3456"

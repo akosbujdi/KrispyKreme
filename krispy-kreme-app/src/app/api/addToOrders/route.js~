@@ -101,8 +101,8 @@ export async function POST(req) {
 
 
         const msg = {
-            to: userEmail,
-            from: 'b00153898@mytudublin.ie',
+            to: userEmail, // User email from the checkout form
+            from: 'b00153898@mytudublin.ie', // Verified sender email
             subject: `Order Confirmation #${result.insertedId}`,
             text: `Thank you for your order! Your order number is #${result.insertedId}. We have sent an email to you with the delivery details.`,
             html: `

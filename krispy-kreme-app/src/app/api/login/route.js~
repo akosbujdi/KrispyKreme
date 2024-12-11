@@ -13,6 +13,9 @@ export async function GET(req) {
         const email = escapeHtml(searchParams.get('email')?.trim() || '');
         const password = escapeHtml(searchParams.get('password')?.trim() || '');
 
+        console.log('email:', email);
+        console.log('password:', password);
+
         // Check for empty or null values after trim
         if (!email || !password) {
             return NextResponse.json({ message: 'Email and password are required.' }, { status: 400 });
